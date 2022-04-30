@@ -77,5 +77,10 @@ variable "name_app" {
   type = string
   description = "Name of app"
 }
+##Azure accounts
+variable "tenant_id" {}      
+variable "subscription_id" {}
+variable "client_id"  {}    
+variable "client_secret" {} 
 
 

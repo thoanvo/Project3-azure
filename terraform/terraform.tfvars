@@ -21,3 +21,9 @@ public_key_path = "~/.ssh/id_rsa.pub"
 
 #App
 name_app = "App-project3"
+
+#Accounnt
+tenant_id       = "69f59580-01e2-4b2d-8c28-571bd28c19f4"
+subscription_id = "9036207b-e2a3-4c95-86a9-72f93e74db1d"
+client_id       = "0a40b5f5-b20b-4c5b-b278-c9864770c661"
+client_secret   = "3TBALlivgz7oUa.o8TIYfBUhXe.q8Q8VKw"
