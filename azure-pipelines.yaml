@@ -17,6 +17,11 @@ stages:
         inputs:
           secureFile: 'terraform.tfvars'
 
+      - task: TerraformInstaller@0
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: '1.1.9'
+
       - task: Bash@3
         displayName: Copy terraform.tfvars
         inputs:
@@ -31,39 +36,78 @@ stages:
           sshPublicKey: '$(sshPublicKey)'
           sshKeySecureFile: 'id_rsa'
 
-  - stage: Build
-    jobs:
-    - job: Build
-      pool:
-        name: Hosted Ubuntu 1604
-      steps:
-      - task: ArchiveFiles@2
-        displayName: 'Archive FakeRestAPI'
+      - task: TerraformTaskV1@0
+        displayName: Terraform Init
         inputs:
-          rootFolderOrFile: 'path/to/fakerestapi'
-          includeRootFolder: false
-          archiveType: 'zip'
-          archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-      - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-        displayName: 'Upload Package'
-        artifact: drop-fakerestapi
-  - stage:
-    jobs:
-    - deployment: FakeRestAPI
-      pool:
-        vmImage: 'Ubuntu-16.04'
-      environment: 'TEST'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - task: AzureWebApp@1
-              displayName: 'Deploy Azure Web App'
-              inputs:
-                azureSubscription: ''
-                appName: ''
-                appType: webApp
-                package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'AZServiceConnection'
+          backendAzureRmResourceGroupName: 'project3'
+          backendAzureRmStorageAccountName: 'project38286'
+          backendAzureRmContainerName: 'project3'
+          backendAzureRmKey: 'terraform.tfstate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+
+      - task: TerraformTaskV1@0
+        displayName: Terraform Validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+          #environmentServiceNameAzureRM: 'AZServiceConnection'
+
+      - task: TerraformTaskV1@0
+        displayName: Terraform Plan
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+          #environmentServiceNameAzureRM: 'AZServiceConnection'
+
+      - task: TerraformTaskV1@0
+        displayName: Terraform Apply
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          commandOptions: |
+            -auto-approve
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+          #environmentServiceNameAzureRM: 'AZServiceConnection'
+
+
+  # - stage: Build
+  #   jobs:
+  #   - job: Build
+  #     pool:
+  #       name: Hosted Ubuntu 1604
+  #     steps:
+  #     - task: ArchiveFiles@2
+  #       displayName: 'Archive FakeRestAPI'
+  #       inputs:
+  #         rootFolderOrFile: 'path/to/fakerestapi'
+  #         includeRootFolder: false
+  #         archiveType: 'zip'
+  #         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+  #     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+  #       displayName: 'Upload Package'
+  #       artifact: drop-fakerestapi
+  # - stage:
+  #   jobs:
+  #   - deployment: FakeRestAPI
+  #     pool:
+  #       vmImage: 'Ubuntu-16.04'
+  #     environment: 'TEST'
+  #     strategy:
+  #       runOnce:
+  #         deploy:
+  #           steps:
+  #           - task: AzureWebApp@1
+  #             displayName: 'Deploy Azure Web App'
+  #             inputs:
+  #               azureSubscription: ''
+  #               appName: ''
+  #               appType: webApp
+  #               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
     # - deployment: VMDeploy
     #   displayName: NAME
     #   environment:
