@@ -81,15 +81,17 @@ In folder you just clone from GitHub -> Choose filename : main.tf and terraform.
 
 **9. Configuring Azure Pipelines** 
 
-> 9.1. Go Project Settings -> Service connections -> New service connection -> Choose **Azure Resource Manager** -> Service Principal (automatics) -> Login and fill verified and authenticated -> Choose name eg: azure-service-cn <br/>
-![screen shot](guideImg/p17.png) <br/>
-
-> 9.2. Go we have to navigate to Pipelines -> Library -> Secure Files <br/>
+> 9.1. Go we have to navigate to Pipelines -> Library -> Secure Files <br/>
 ![screen shot](guideImg/p18.png) <br/>
 
-> 9.3. Choose tab "Secure files" ->  "+Secure files" -> upload two file : **terraform.tfvars** and key file **id_rsa** created on step 6 <br/>
+> 9.2. Choose tab "Secure files" ->  "+Secure files" -> upload two file : **terraform.tfvars** and key file **id_rsa** created on step 6 <br/>
 ![screen shot](guideImg/p19.png) <br/>
 ![screen shot](guideImg/p20.png) <br/>
+
+> type command : ssh-keyscan github.com -> Get your "Known Hosts Entry" is the displayed third value that doesn't begin with # in the GitBash results:<br/>
+![screen shot](guideImg/p24.png) <br/>
+
+
 
 > 9.4. Go to Pipelines -> Environments -> Create  Environments -> Name : DEV and select : Virtual machine -> Choose Linux and copy script -> Close<br/>
 ![screen shot](guideImg/p21.png) <br/>
