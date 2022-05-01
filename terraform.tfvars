@@ -11,7 +11,7 @@ myip = "118.71.11.255"
 allocation_method = "Dynamic"
 name_nsg = "NSG-subnet"
 #VM
-name_image = "image_VM"
+name_image = "VM"
 name_vm = "VM-QA"
 name_size = "Standard_B1s"
 type_storage = "Standard_LRS"
