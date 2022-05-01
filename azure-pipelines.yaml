@@ -76,60 +76,207 @@ stages:
           environmentServiceNameAzureRM: 'azure-sevice-cn'
 
 
-  # - stage: Build
-  #   jobs:
-  #   - job: Build
-  #     pool:
-  #       name: Hosted Ubuntu 1604
-  #     steps:
-  #     - task: ArchiveFiles@2
-  #       displayName: 'Archive FakeRestAPI'
-  #       inputs:
-  #         rootFolderOrFile: 'path/to/fakerestapi'
-  #         includeRootFolder: false
-  #         archiveType: 'zip'
-  #         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-  #     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-  #       displayName: 'Upload Package'
-  #       artifact: drop-fakerestapi
-  # - stage:
-  #   jobs:
-  #   - deployment: FakeRestAPI
-  #     pool:
-  #       vmImage: 'Ubuntu-16.04'
-  #     environment: 'TEST'
-  #     strategy:
-  #       runOnce:
-  #         deploy:
-  #           steps:
-  #           - task: AzureWebApp@1
-  #             displayName: 'Deploy Azure Web App'
-  #             inputs:
-  #               azureSubscription: ''
-  #               appName: ''
-  #               appType: webApp
-  #               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-    # - deployment: VMDeploy
-    #   displayName: NAME
-    #   environment:
-    #     name:  ENVIRONMENT NAME
-    #     resourceType: VirtualMachine
-    #     tags: TAG NAME
-    #   strategy:
-    #     runOnce:
-    #       deploy:
-    #         steps:
-    #         - task: Bash@3
-    #           inputs:
-    #             targetType: 'inline'
-    #             script: |
-    #               #! /bin/bash
+  - stage: Build
+    jobs:
+    - job: Build
+      pool:
+        name: Hosted Ubuntu 1604
+      steps:
+      - task: ArchiveFiles@2
+        displayName: Archive FakeRestAPI
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/fakerestapi'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Build.BuildId)-fakerestapi.zip'
+      - task: PublishPipelineArtifact@1
+        displayName: Upload package
+        inputs:   
+          targetPath: $(Build.BuildId)-fakerestapi.zip
+          artifact: drop-fakerestapi
+
+      - task: ArchiveFiles@2
+        displayName: Archive Selenium
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Build.BuildId)-selenium.zip'
+          replaceExistingArchive: true
+        
+      - task: PublishPipelineArtifact@1
+        displayName: Upload Selenium
+        inputs:
+         targetPath: $(Build.BuildId)-selenium.zip
+         artifact: drop-selenium
+
+  - stage: Wait
+    jobs:
+      - job: ServerRunning
+        pool: Server
+        steps:
+          - task: Delay@1
+            inputs:
+             delayForMinutes: '10'
+
+  - stage: Deploy App
+    displayName: Deploy App
+    jobs:
+    - deployment: FakeRestAPI
+      pool:
+        vmImage: 'Ubuntu-18.04'
+      environment: 'TEST'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureWebApp@1
+              displayName: 'Deploy Azure Web App'
+              inputs:
+                azureSubscription: 'azure-sevice-cn'
+                appName: 'App-project3'
+                appType: webApp
+                package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
+                deploymentMethod: auto
+
+    - deployment: VMDeploy
+      displayName: VMDeploy
+      environment:
+        name:  'TEST'
+        resourceType: VirtualMachine
+        tags: 'TEST'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: Bash@3
+              inputs:
+                targetType: 'inline'
+                script: |
+                  #!/bin/bash
                   
-    #               sudo apt-get upgrade -y
-    #               sudo apt-get install python3-pip -y
-    #               sudo apt-get install unzip -y
-    #               sudo apt-get install -y chromium-browser
-    #               pip3 install selenium
-    #               export PATH=$PATH:some/path
+                  sudo apt-get upgrade -y
+                  sudo apt-get install python3-pip -y
+                  sudo apt-get install unzip -y
+                  sudo apt-get install -y chromium-browser
+                  pip3 install selenium
+                  python3 -V
+                  pip3 -V
+                  export PATH=$PATH:/usr/local/bin
+                  FILE=chromedriver_linux64.zip
+                  if [ -f "$FILE" ]; then
+                    echo "$FILE exists."
+                  else
+                    wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
+                  fi
+                  # install chrome driver
+                  unzip chromedriver_linux64.zip
+                  sudo mv chromedriver /usr/bin/chromedriver
+                  sudo chown root:root /usr/bin/chromedriver
+                  sudo chmod +x /usr/bin/chromedriver
+                  chromium-browser -version
+                  chromedriver --version
+                  # agent log analytics
+  - stage: Test
+    jobs:
+      - deployment: test_on_vm
+        displayName: UI testing
+        environment:
+         name: 'TEST'
+         resourceType: VirtualMachine
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: Bash@3
+                  inputs:
+                   targetType: inline
+                   script: |
+                    #!/bin/bash
+                    cd $(Pipeline.Workspace)/drop-selenium
+                    unzip -o $(Build.BuildId)-selenium.zip
+                    sudo mkdir -p /var/log/selenium
+                    sudo chmod 664 /var/log/selenium
+                    sudo python3 login.py > ui-logs.log
+                    sudo mv ui-logs.log /var/log/selenium
+      - job: Test_Jmeter
+        displayName: Performance testing
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - bash: |
+              sudo apt-get install openjdk-11-jre-headless -y
+              java -version
+              wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.tgz -O jmeter.tgz
+              tar xzvf jmeter.tgz
+              apache-jmeter-5.4/bin/jmeter --version
+              mkdir -p log/jmeter
+              pwd
+              ls -la
+            displayName: Install JMeter
+          - bash: |
+              apache-jmeter-5.4/bin/jmeter -n -t jmeter/StressTestSuitev2.jmx \
+                                           -l log/jmeter/stress-test-result.csv \
+                                            -e -f -o log/jmeter/stress-test-html-report \
+                                            -j log/jmeter/jmeter-stress-test.log
+            displayName: Stress test
+          - bash: |
+              apache-jmeter-5.4/bin/jmeter -n -t jmeter/EnduranceTestSuitev2.jmx \
+                                       -l log/jmeter/endurance-test-result.csv \
+                                       -e -f -o log/jmeter/endurance-test-html-report \
+                                       -j log/jmeter/jmeter-endurance-test.log
+            displayName: Jmeter test
+          - task: ArchiveFiles@2
+            displayName: Archive HTML report
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report.zip'
+              verbose: true
+          - task: ArchiveFiles@2
+            displayName: Archive HTML report
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report.zip'
+              verbose: true
+          - task: PublishPipelineArtifact@1
+            displayName: Publish JMeter logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
+              artifact: drop-jmeter
 
-
+      - job: Test_Post_man
+        displayName: Postman Test
+        pool:
+            vmImage: 'ubuntu-18.04'
+        steps: 
+          - task: NodeTool@0
+            displayName: Install Node v14.X
+            inputs:
+              versionSpec: '14.x'
+          - bash: |
+              npm install -g newman
+              mkdir -p log/newman
+            displayName: Install Newman CLI
+          - bash: |
+              newman run automatedtesting/postman/regressionTest.json \
+                        -e automatedtesting/postman/testingenvironment.json \
+                        --reporters cli,junit \
+                        --reporter-junit-export log/newman/regressionTest.xml \
+                        --suppress-exit-code
+            displayName: Run Regression Test
+          - bash: |
+              newman run automatedtesting/postman/validationTest.json \
+                        -e automatedtesting/postman/testingenvironment.json \
+                        --reporters cli,junit \
+                        --reporter-junit-export log/newman/validationTest.xml \
+                        --suppress-exit-code
+            displayName: Run Validation Test
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Newman logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
+              artifactName: 'drop-newman-logs'
