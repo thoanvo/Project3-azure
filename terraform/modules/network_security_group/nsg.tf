@@ -27,7 +27,7 @@ resource "azurerm_network_security_rule" "rule_ssh_vm" {
   source_port_range = "*"
   destination_port_range = "22"
   source_address_prefix = "${var.myip}/32"
-  destination_address_prefix = "${var.ip_public}/32"
+  destination_address_prefix = "*"
   resource_group_name = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
