@@ -33,8 +33,8 @@ Type command : az login -> login azure with username password -> success if see 
 
 **3. Configure storage account to Store Terraform state**
 
-**Run script azure-storage-account.sh** :
-In folder you just clone from GitHub -> select filename like : azure-storage-account.sh -> Run script with command :  sh azure-storage-account.sh <br/>
+**Run script storage_account.sh** :
+In folder you just clone from GitHub -> select filename like : storage_account.sh -> Run script with command :  sh storage_account.sh <br/>
 You can edit value or let to default <br/>
 ![screen shot](guideImg/p4.png) <br/>
 
