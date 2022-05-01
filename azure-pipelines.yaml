@@ -220,13 +220,13 @@ stages:
           - bash: |
               jmeter -n -t automatedtesting/jmeter/StressTest.jmx \
                                            -l log/jmeter/stress-test-result.csv \
-                                            -e -f -o log/jmeter/stress-test-html-report \
+                                            -e -o log/jmeter/stress-test-html-report \
                                             -j log/jmeter/jmeter-stress-test.log
             displayName: Stress test
           - bash: |
               jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx \
                                        -l log/jmeter/endurance-test-result.csv \
-                                       -e -f -o log/jmeter/endurance-test-html-report \
+                                       -e -o log/jmeter/endurance-test-html-report \
                                        -j log/jmeter/jmeter-endurance-test.log
             displayName: EnduranceTest
           - task: ArchiveFiles@2
