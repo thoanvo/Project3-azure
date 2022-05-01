@@ -119,7 +119,7 @@ stages:
             inputs:
              delayForMinutes: '10'
 
-  - stage: Deploy App
+  - stage: DeployApp
     displayName: Deploy App
     jobs:
     - deployment: FakeRestAPI
