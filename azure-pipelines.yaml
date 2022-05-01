@@ -39,7 +39,7 @@ stages:
           sshPublicKey: '$(sshPublicKey)'
           sshKeySecureFile: 'id_rsa'
 
-      - task: TerraformTaskV1@0
+      - task: TerraformTaskV2@2
         displayName: Terraform Init
         inputs:
           provider: 'azurerm'
@@ -51,7 +51,7 @@ stages:
           backendAzureRmKey: 'terraform.tfstate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
 
-      - task: TerraformTaskV1@0
+      - task: TerraformTaskV2@2
         displayName: Terraform Validate
         inputs:
           provider: 'azurerm'
@@ -59,7 +59,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
           environmentServiceNameAzureRM: 'azure-sevice-cn'
 
-      - task: TerraformTaskV1@0
+      - task: TerraformTaskV2@2
         displayName: Terraform Plan
         inputs:
           provider: 'azurerm'
@@ -67,7 +67,7 @@ stages:
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
           environmentServiceNameAzureRM: 'azure-sevice-cn'
 
-      - task: TerraformTaskV1@0
+      - task: TerraformTaskV2@2
         displayName: Terraform Apply
         inputs:
           provider: 'azurerm'
