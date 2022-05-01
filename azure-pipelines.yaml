@@ -82,7 +82,7 @@ stages:
     jobs:
     - job: Build
       pool:
-        name: Hosted Ubuntu 1604
+         vmImage: 'ubuntu-18.04'
       steps:
       - task: ArchiveFiles@2
         displayName: Archive FakeRestAPI
