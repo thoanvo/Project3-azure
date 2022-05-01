@@ -3,8 +3,8 @@ variables:
   python.version: '3.7.6'
   applicationname: 'App-project3'
 stages:
-  - stage: ProvisionIaC
-    displayName: Azure Resources Provisioning
+  - stage: Infrastructure
+    displayName: Azure Resources Create with terraform
     jobs:
     - job: TerraformTasks
       displayName: Terraform
