@@ -161,6 +161,7 @@ stages:
                   else
                     wget https://chromedriver.storage.googleapis.com/89.0.4389.23/chromedriver_linux64.zip
                   fi
+                  python3 -c "import selenium; print('Selenium Version:', selenium.__version__)"
                   # install chrome driver
                   unzip chromedriver_linux64.zip
                   sudo mv chromedriver /usr/bin/chromedriver
@@ -209,7 +210,7 @@ stages:
               mkdir -p log/jmeter/stress-test-html-report
               mkdir log/jmeter/endurance-test-html-report
               pwd
-              ls -la
+              ls -la 
             displayName: Install JMeter
           - bash: |
               apache-jmeter-5.4/bin/jmeter -n -t automatedtesting/jmeter/StressTest.jmx \
@@ -222,7 +223,7 @@ stages:
                                        -l log/jmeter/endurance-test-result.csv \
                                        -e -f -o log/jmeter/endurance-test-html-report \
                                        -j log/jmeter/jmeter-endurance-test.log
-            displayName: Jmeter test
+            displayName: EnduranceTest
           - task: ArchiveFiles@2
             displayName: Archive HTML report
             inputs:
