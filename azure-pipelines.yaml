@@ -112,15 +112,6 @@ stages:
          targetPath: $(Build.BuildId)-selenium.zip
          artifact: drop-selenium
 
-  - stage: Wait
-    jobs:
-      - job: ServerRunning
-        pool: Server
-        steps:
-          - task: Delay@1
-            inputs:
-             delayForMinutes: '10'
-
   - stage: DeployApp
     displayName: Deploy App
     jobs:
