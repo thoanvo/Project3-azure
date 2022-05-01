@@ -6,76 +6,76 @@ variables:
   - group: ssh-config
     
 stages:
-  - stage: Infrastructure
-    displayName: Azure Resources Create with terraform
-    jobs:
-    - job: TerraformTasks
-      displayName: Terraform
-      pool:
-        vmImage: 'ubuntu-18.04'
-      steps:
-      - task: DownloadSecureFile@1
-        name: terraform
-        displayName: Download terraform.tfvars
-        inputs:
-          secureFile: 'terraform.tfvars'
+  # - stage: Infrastructure
+  #   displayName: Azure Resources Create with terraform
+  #   jobs:
+  #   - job: TerraformTasks
+  #     displayName: Terraform
+  #     pool:
+  #       vmImage: 'ubuntu-18.04'
+  #     steps:
+  #     - task: DownloadSecureFile@1
+  #       name: terraform
+  #       displayName: Download terraform.tfvars
+  #       inputs:
+  #         secureFile: 'terraform.tfvars'
 
-      - task: TerraformInstaller@0
-        displayName: Install Terraform
-        inputs:
-          terraformVersion: 'latest'
+  #     - task: TerraformInstaller@0
+  #       displayName: Install Terraform
+  #       inputs:
+  #         terraformVersion: 'latest'
 
-      - task: Bash@3
-        displayName: Copy terraform.tfvars
-        inputs:
-          targetType: 'inline'
-          script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform
+  #     - task: Bash@3
+  #       displayName: Copy terraform.tfvars
+  #       inputs:
+  #         targetType: 'inline'
+  #         script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform
 
-      # Needed for Terraform VM deployment
-      - task: InstallSSHKey@0
-        displayName: Key for SSH to VM
-        inputs:
-          knownHostsEntry: '$(knownHostsEntry)'
-          sshPublicKey: '$(sshPublicKey)'
-          sshKeySecureFile: 'id_rsa'
+  #     # Needed for Terraform VM deployment
+  #     - task: InstallSSHKey@0
+  #       displayName: Key for SSH to VM
+  #       inputs:
+  #         knownHostsEntry: '$(knownHostsEntry)'
+  #         sshPublicKey: '$(sshPublicKey)'
+  #         sshKeySecureFile: 'id_rsa'
 
-      - task: TerraformTaskV2@2
-        displayName: Terraform Init
-        inputs:
-          provider: 'azurerm'
-          command: 'init'
-          backendServiceArm: 'azure-sevice-cn'
-          backendAzureRmResourceGroupName: 'project3'
-          backendAzureRmStorageAccountName: '$(StorageAccountName)'
-          backendAzureRmContainerName: 'project3'
-          backendAzureRmKey: 'terraform.tfstate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+  #     - task: TerraformTaskV2@2
+  #       displayName: Terraform Init
+  #       inputs:
+  #         provider: 'azurerm'
+  #         command: 'init'
+  #         backendServiceArm: 'azure-sevice-cn'
+  #         backendAzureRmResourceGroupName: 'project3'
+  #         backendAzureRmStorageAccountName: '$(StorageAccountName)'
+  #         backendAzureRmContainerName: 'project3'
+  #         backendAzureRmKey: 'terraform.tfstate'
+  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
 
-      - task: TerraformTaskV2@2
-        displayName: Terraform Validate
-        inputs:
-          provider: 'azurerm'
-          command: 'validate'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'azure-sevice-cn'
+  #     - task: TerraformTaskV2@2
+  #       displayName: Terraform Validate
+  #       inputs:
+  #         provider: 'azurerm'
+  #         command: 'validate'
+  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+  #         environmentServiceNameAzureRM: 'azure-sevice-cn'
 
-      - task: TerraformTaskV2@2
-        displayName: Terraform Plan
-        inputs:
-          provider: 'azurerm'
-          command: 'plan'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'azure-sevice-cn'
+  #     - task: TerraformTaskV2@2
+  #       displayName: Terraform Plan
+  #       inputs:
+  #         provider: 'azurerm'
+  #         command: 'plan'
+  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+  #         environmentServiceNameAzureRM: 'azure-sevice-cn'
 
-      - task: TerraformTaskV2@2
-        displayName: Terraform Apply
-        inputs:
-          provider: 'azurerm'
-          command: 'apply'
-          commandOptions: |
-            -auto-approve
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'azure-sevice-cn'
+  #     - task: TerraformTaskV2@2
+  #       displayName: Terraform Apply
+  #       inputs:
+  #         provider: 'azurerm'
+  #         command: 'apply'
+  #         commandOptions: |
+  #           -auto-approve
+  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+  #         environmentServiceNameAzureRM: 'azure-sevice-cn'
 
 
   - stage: Build
