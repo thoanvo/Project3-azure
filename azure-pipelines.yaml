@@ -1,8 +1,12 @@
 
+
+
 name: Azure Pipelines
 variables:
-  python.version: '3.7.6'
-  applicationname: 'App-project3'
+  - group: ssh-config
+    python.version: '3.7.6'
+    applicationname: 'App-project3'
+  
 stages:
   - stage: Infrastructure
     displayName: Azure Resources Create with terraform
