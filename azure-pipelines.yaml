@@ -144,9 +144,9 @@ stages:
     - deployment: VMDeploy
       displayName: VMDeploy
       environment:
-        name:  'TEST'
+        name:  'VM-QA'
         resourceType: VirtualMachine
-        tags: 'TEST'
+        tags: 'VM-QA'
       strategy:
         runOnce:
           deploy:
