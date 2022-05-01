@@ -218,6 +218,7 @@ stages:
               ls -la 
             displayName: Install JMeter
           - bash: |
+              jmeter --version
               jmeter -h
               jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
             displayName: Stress test
