@@ -135,9 +135,8 @@ stages:
     - deployment: VMDeploy
       displayName: VMDeploy
       environment:
-        name:  'VM-QA'
+        name:  'TEST'
         resourceType: VirtualMachine
-        tags: 'VM-QA'
       strategy:
         runOnce:
           deploy:
@@ -170,7 +169,7 @@ stages:
                   chromium-browser -version
                   chromedriver --version
                   # agent log analytics
-                  mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/2.202.1/vsts-agent-linux-x64-2.202.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x "$(command -v systemctl)" ]; then ./config.sh --environment --environmentname "TEST" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/phamtuan4nh/ --work _work --projectname 'project3' --auth PAT --token b3rvbno3fhnsrx7hwlrvd6i6flfyo4xivrle47wznjdirzcsqdzq --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname "TEST" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/phamtuan4nh/ --work _work --projectname 'project3' --auth PAT --token b3rvbno3fhnsrx7hwlrvd6i6flfyo4xivrle47wznjdirzcsqdzq; ./run.sh; fi
+                  mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage.azureedge.net/agent/2.202.1/vsts-agent-linux-x64-2.202.1.tar.gz;tar -zxvf vstsagent.tar.gz; if [ -x "$(command -v systemctl)" ]; then ./config.sh --environment --environmentname "TEST" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/phamtuan4nh/ --work _work --projectname 'project3' --auth PAT --token f2bwdzmn5zrnqfggak4ftz6thdtejimjby2aqhxaj3mufogmc64a --runasservice; sudo ./svc.sh install; sudo ./svc.sh start; else ./config.sh --environment --environmentname "TEST" --acceptteeeula --agent $HOSTNAME --url https://dev.azure.com/phamtuan4nh/ --work _work --projectname 'project3' --auth PAT --token f2bwdzmn5zrnqfggak4ftz6thdtejimjby2aqhxaj3mufogmc64a; ./run.sh; fi
   - stage: Test
     jobs:
       - deployment: test_on_vm
