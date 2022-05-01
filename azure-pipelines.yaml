@@ -43,7 +43,7 @@ stages:
           command: 'init'
           backendServiceArm: 'AZServiceConnection'
           backendAzureRmResourceGroupName: 'project3'
-          backendAzureRmStorageAccountName: 'project38286'
+          backendAzureRmStorageAccountName: '$(StorageAccountName)'
           backendAzureRmContainerName: 'project3'
           backendAzureRmKey: 'terraform.tfstate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
@@ -54,7 +54,7 @@ stages:
           provider: 'azurerm'
           command: 'validate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          #environmentServiceNameAzureRM: 'AZServiceConnection'
+          environmentServiceNameAzureRM: 'AZServiceConnection'
 
       - task: TerraformTaskV1@0
         displayName: Terraform Plan
@@ -62,7 +62,7 @@ stages:
           provider: 'azurerm'
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          #environmentServiceNameAzureRM: 'AZServiceConnection'
+          environmentServiceNameAzureRM: 'AZServiceConnection'
 
       - task: TerraformTaskV1@0
         displayName: Terraform Apply
@@ -72,7 +72,7 @@ stages:
           commandOptions: |
             -auto-approve
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          #environmentServiceNameAzureRM: 'AZServiceConnection'
+          environmentServiceNameAzureRM: 'AZServiceConnection'
 
 
   # - stage: Build

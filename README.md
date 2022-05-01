@@ -77,23 +77,27 @@ In folder you just clone from GitHub -> Choose filename : main.tf and terraform.
 
 > 8.1. Go to and login https://azure.microsoft.com/en-us/services/devops/ <br/>
 > 8.2. Create new project <br/>
-![screen shot](guideImg/p15.png) <br/>
+![screen shot](guideImg/p16.png) <br/>
 
 **9. Configuring Azure Pipelines** 
 
-> 9.1. Go we have to navigate to Pipelines -> Library -> Secure Files <br/>
+> 9.1. Create the Service Connection  in Project Settings > Pipelines > Service Connection > Choose "Azure Resource Manager" > verified and authenticated and choose resource group > Save <br/>
+ ![screen shot](guideImg/p17.png) <br/>
+
+> 9.2. Go we have to navigate to Pipelines -> Library -> Secure Files <br/>
 ![screen shot](guideImg/p18.png) <br/>
 
-> 9.2. Choose tab "Secure files" ->  "+Secure files" -> upload two file : **terraform.tfvars** and key file **id_rsa** created on step 6 <br/>
+> 9.3. Choose tab "Secure files" ->  "+Secure files" -> upload two file : **terraform.tfvars** and key file **id_rsa** created on step 6 <br/>
 ![screen shot](guideImg/p19.png) <br/>
 ![screen shot](guideImg/p20.png) <br/>
 
 > type command : ssh-keyscan github.com -> Get your "Known Hosts Entry" is the displayed third value that doesn't begin with # in the GitBash results:<br/>
 ![screen shot](guideImg/p24.png) <br/>
 
+> 9.4. Create groups of variables that you can share across multiple pipelines . Choose "+Variable groups" > Add name groups of variables : ssh-config > Add **knownHostsEntry**,**sshPublicKey**,**StorageAccountName (step 3)** and value this in Variables > Select type to secret > Save <br/>
+![screen shot](guideImg/p25.png) <br/>
 
-
-> 9.4. Go to Pipelines -> Environments -> Create  Environments -> Name : DEV and select : Virtual machine -> Choose Linux and copy script -> Close<br/>
+> 9.5. Go to Pipelines -> Environments -> Create  Environments -> Name : DEV and select : Virtual machine -> Choose Linux and copy script -> Close<br/>
 ![screen shot](guideImg/p21.png) <br/>
 ![screen shot](guideImg/p22.png) <br/>
 ![screen shot](guideImg/p23.png) <br/>
