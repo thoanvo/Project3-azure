@@ -6,8 +6,8 @@ stages:
   - stage: ProvisionIaC
     displayName: Azure Resources Provisioning
     jobs:
-    - job: Provision_Azure_IaC
-      displayName: Provision Azure IaC
+    - job: TerraformTasks
+      displayName: Terraform
       pool:
         vmImage: 'ubuntu-18.04'
       steps:
