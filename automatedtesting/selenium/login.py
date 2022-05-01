@@ -22,7 +22,8 @@ if __name__ == "__main__":
     print ('Starting the browser...')
     # --uncomment when running in Azure DevOps.
     options = ChromeOptions()
-    options.add_argument("--headless") 
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
     driver = webdriver.Chrome(options=options)
     #driver = webdriver.Chrome()
 
