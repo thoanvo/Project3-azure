@@ -20,7 +20,7 @@ stages:
       - task: TerraformInstaller@0
         displayName: Install Terraform
         inputs:
-          terraformVersion: '1.1.9'
+          terraformVersion: 'latest'
 
       - task: Bash@3
         displayName: Copy terraform.tfvars
@@ -41,7 +41,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          backendServiceArm: 'AZServiceConnection'
+          backendServiceArm: 'azure-sevice-cn'
           backendAzureRmResourceGroupName: 'project3'
           backendAzureRmStorageAccountName: '$(StorageAccountName)'
           backendAzureRmContainerName: 'project3'
@@ -54,7 +54,7 @@ stages:
           provider: 'azurerm'
           command: 'validate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'AZServiceConnection'
+          environmentServiceNameAzureRM: 'azure-sevice-cn'
 
       - task: TerraformTaskV1@0
         displayName: Terraform Plan
@@ -62,7 +62,7 @@ stages:
           provider: 'azurerm'
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'AZServiceConnection'
+          environmentServiceNameAzureRM: 'azure-sevice-cn'
 
       - task: TerraformTaskV1@0
         displayName: Terraform Apply
@@ -72,7 +72,7 @@ stages:
           commandOptions: |
             -auto-approve
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'AZServiceConnection'
+          environmentServiceNameAzureRM: 'azure-sevice-cn'
 
 
   # - stage: Build
