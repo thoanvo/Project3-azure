@@ -17,6 +17,8 @@ name_size = "Standard_B1s"
 type_storage = "Standard_LRS"
 admin_username = "anhpt"
 # public key on Window
+#public_key_path = "C:/Users/admin/.ssh/id_rsa.pub"
+#public key on pipeline
 public_key_path = "/home/vsts/work/_temp/id_rsa.pub"
 
 #App
