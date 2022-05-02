@@ -130,7 +130,7 @@ stages:
                 appName: 'App-project3'
                 appType: webApp
                 package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-                deploymentMethod: auto
+                deploymentMethod: auto          
 
     - deployment: VMDeploy
       displayName: VMDeploy
@@ -157,13 +157,6 @@ stages:
                   python3 -V
                   pip3 -V
                   export PATH=$PATH:/usr/local/bin
-                  
-                  python3 -c "import selenium; print('Selenium Version:', selenium.__version__)"
-                  # # install chrome driver
-                  # unzip chromedriver_linux64.zip
-                  # sudo mv chromedriver /usr/bin/chromedriver
-                  # sudo chown root:root /usr/bin/chromedriver
-                  # sudo chmod +x /usr/bin/chromedriver
                   chromium-browser -version
                   chromedriver --version
                   # agent log analytics
@@ -201,30 +194,19 @@ stages:
           - bash: |
               # sudo apt-get install openjdk-11-jre-headless -y
               java -version
-              # wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.tgz -O jmeter.tgz
-              # tar xzvf jmeter.tgz
-              # apache-jmeter-5.4/bin/jmeter --version
-              sudo apt update -y
-              sudo apt upgrade -y
-              sudo apt install jmeter
+              wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.4.3.zip
+              unzip apache-jmeter-5.4.3.zip              
               echo "####################"
               echo "jmeter version : " 
-              jmeter --version
-              which jmeter
+              apache-jmeter-5.4.3/bin/jmeter -v
               echo "####################"
-              mkdir -p log/jmeter/stress-test-html-report
-              mkdir log/jmeter/endurance-test-html-report
-              pwd
-              ls -la 
+              mkdir -p log/jmeter
             displayName: Install JMeter
           - bash: |
-              jmeter --version
-              jmeter -h
-              jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
+              apache-jmeter-5.4.3/bin/jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
             displayName: Stress test
           - bash: |
-              jmeter -h
-              jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
+              apache-jmeter-5.4.3/bin/jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
             displayName: EnduranceTest
           - task: ArchiveFiles@2
             displayName: Archive HTML report
@@ -258,22 +240,16 @@ stages:
             inputs:
               versionSpec: '14.x'
           - bash: |
-              npm install -g newman
+              node -v
+              sudo npm install -g newman
               mkdir -p log/newman
+              newman -v
             displayName: Install Newman CLI
           - bash: |
-              newman run automatedtesting/postman/regressionTest.json \
-                        -e automatedtesting/postman/testingenvironment.json \
-                        --reporters cli,junit \
-                        --reporter-junit-export log/newman/regressionTest.xml \
-                        --suppress-exit-code
+                newman run automatedtesting/postman/project3-aruze-ReTest.postman_collection.json -e automatedtesting/postman/Env.RegressionTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/RegressionTest.xml --suppress-exit-code
             displayName: Run Regression Test
           - bash: |
-              newman run automatedtesting/postman/validationTest.json \
-                        -e automatedtesting/postman/testingenvironment.json \
-                        --reporters cli,junit \
-                        --reporter-junit-export log/newman/validationTest.xml \
-                        --suppress-exit-code
+                newman run automatedtesting/postman/project3-aruze-ValTest.postman_collection.json -e automatedtesting/postman/Env.ValidationTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/ValidationTest.xml --suppress-exit-code
             displayName: Run Validation Test
           - task: PublishPipelineArtifact@1
             displayName: Publish Newman logs

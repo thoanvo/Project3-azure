@@ -69,6 +69,8 @@ In folder you just clone from GitHub -> Choose filename : main.tf and terraform.
 ![screen shot](guideImg/p13.png) <br/>
 ![screen shot](guideImg/p14.png) <br/>
 
+Tips: if you use SSH on Azure devops, remove comment "public key on pipeline" in **terraform.tfvars**
+
 **7. Edit terraform.tfvars**<br/>
 > like file **key.json** on step 5, edit file like this<br/>
 ![screen shot](guideImg/p15.png) <br/>
@@ -97,9 +99,39 @@ In folder you just clone from GitHub -> Choose filename : main.tf and terraform.
 > 9.4. Create groups of variables that you can share across multiple pipelines . Choose "+Variable groups" > Add name groups of variables : ssh-config > Add **knownHostsEntry**,**sshPublicKey**,**StorageAccountName (step 3)** and value this in Variables > Select type to secret > Save <br/>
 ![screen shot](guideImg/p25.png) <br/>
 
-> 9.5. Go to Pipelines -> Environments -> Create  Environments -> Name : DEV and select : Virtual machine -> Choose Linux and copy script -> Close<br/>
-![screen shot](guideImg/p21.png) <br/>
-![screen shot](guideImg/p22.png) <br/>
-![screen shot](guideImg/p23.png) <br/>
+> 9.5. Install these Extensions: <br/>
+* Terraform (https://marketplace.visualstudio.com/items?itemName=ms-devlabs.custom-terraform-tasks&targetId=625be685-7d04-4b91-8e92-0a3f91f6c3ac&utm_source=vstsproduct&utm_medium=ExtHubManageList) <br/>
 
+
+**10. Create Azure Pipeline**
+
+> 10.1. Tab Pipelines -> Create Pipeline -> Where is your code? Choose Github(Yaml) -> Select Repo -> Configure your pipeline
+: CHoose "Existing Azure Pipelines yaml file" > Continue > Run <br/>
+![screen shot](guideImg/p27.png) <br/>
+
+> 10.2. Apcept permission for Azure Resources Create with terraform <br/>
+![screen shot](guideImg/p26.png) <br/>
+
+> 10.3. Pipeline run step like this <br/>
+![screen shot](guideImg/p28.png) <br/>
+![screen shot](guideImg/p29.png) <br/>
+
+> 10.4. When step deploy virtual machine(VM) if you can see error : "no resource found ...". you must Registration VM on environment Pipeline and you only need to run it once <br/>
+
+> 10.5. Go to Azure pipeline -> Environments -> you can see Environments name is "TEST" -> Choose and select "Add resource" -> choose "Virtual machines" > Select "Linux" and Choose icon "Copy command ..." > Close
+![screen shot](guideImg/p34.png) <br/>
+![screen shot](guideImg/p35.png) <br/>
+![screen shot](guideImg/p36.png) <br/>
+![screen shot](guideImg/p37.png) <br/>
+
+> 10.6. SSH into VM you just created -> Enter command you just copy above step -> Run it -> Success if you see result like this 
+![screen shot](guideImg/p32.png) <br/>
+![screen shot](guideImg/p38.png) <br/>
+
+> 10.7. Back to pipeline and re-run
+
+**11. Report and testing**
+
+> 11.1. App running <br/>
+ ![screen shot](guideImg/p30.png) <br/>
 

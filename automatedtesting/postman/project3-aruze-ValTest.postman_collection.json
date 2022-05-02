@@ -1,0 +1,321 @@
+{
+	"info": {
+		"_postman_id": "c35cedee-f8f4-4b88-a598-2fcd3147070b",
+		"name": "project3-aruze-ValTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var json = pm.response.json();\r",
+							"pm.environment.set(\"id\", json.data.id);\r",
+							"pm.variables.set(\"user_id\", json.data.id);\r",
+							"\r",
+							"var schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\"  : { \"type\": \"string\" },\r",
+							"        \"data\"    : { \"type\": \"object\",\r",
+							"                      \"properties\": {\r",
+							"                          \"id\": { \"type\": \"number\" },\r",
+							"                          \"name\": { \"type\": \"string\" },\r",
+							"                          \"salary\": { \"type\": \"string\" },\r",
+							"                          \"age\": { \"type\": \"string\" }\r",
+							"                      }\r",
+							"                    },\r",
+							"\t\t\"message\" : { \"type\": \"string\" }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Validate Success\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"});\r",
+							"\r",
+							"pm.test('Validate schema', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.name).to.eql(pm.variables.get(\"name\"));\r",
+							"    pm.expect(jsonData.data.age).to.eql(pm.variables.get(\"age\"));\r",
+							"    pm.expect(jsonData.data.salary).to.eql(pm.variables.get(\"salary\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": {{id}},\r\n    \"name\": \"{{name}}\",\r\n    \"salary\": \"{{salary}}\",\r\n    \"age\": \"{{age}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/{{version}}/create",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"{{version}}",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\"  : { \"type\": \"string\" },\r",
+							"        \"data\"    : { \"type\": \"array\" }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test('Validate schema', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Success\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/{{version}}/employees",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"{{version}}",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\"  : { \"type\": \"string\" },\r",
+							"        \"data\"    : { \"type\": \"object\",\r",
+							"                      \"properties\": {\r",
+							"                          \"id\": { \"type\": \"string\" },\r",
+							"                          \"employee_name\": { \"type\": \"string\" },\r",
+							"                          \"employee_salary\": { \"type\": \"string\" },\r",
+							"                          \"employee_age\": { \"type\": \"string\" }\r",
+							"                      }\r",
+							"                    },\r",
+							"\t\t\"message\" : { \"type\": \"string\" }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test('Validate schema', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Success\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.id).to.eql(pm.variables.get(\"user_id\"));\r",
+							"    pm.expect(jsonData.data.employee_name).to.eql(pm.variables.get(\"name\"));\r",
+							"    pm.expect(jsonData.data.employee_salary).to.eql(pm.variables.get(\"salary\"));\r",
+							"    pm.expect(jsonData.data.employee_age).to.eql(pm.variables.get(\"age\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/{{version}}/employee/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"{{version}}",
+						"employee",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//per api description\r",
+							"var schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\"  : { \"type\": \"string\" },\r",
+							"        \"data\"    : { \"type\": \"object\",\r",
+							"                      \"properties\": {\r",
+							"                          \"name\": { \"type\": \"string\" },\r",
+							"                          \"salary\": { \"type\": \"string\" },\r",
+							"                          \"age\": { \"type\": \"string\" }\r",
+							"                      }\r",
+							"                    },\r",
+							"\t\t\"message\" : { \"type\": \"string\" }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test('Validate schema', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Success\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Data\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.name).to.eql(pm.variables.get(\"new_name\"));\r",
+							"    pm.expect(jsonData.data.salary).to.eql(pm.variables.get(\"new_salary\"));\r",
+							"    pm.expect(jsonData.data.age).to.eql(pm.variables.get(\"new_age\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{new_name}}\",\r\n    \"salary\": \"{{new_salary}}\",\r\n    \"age\": \"{{new_age}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/{{version}}/update/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"{{version}}",
+						"update",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"status\"  : { \"type\": \"string\" },\r",
+							"        \"data\"    : { \"type\": \"string\" },\r",
+							"\t\t\"message\" : { \"type\": \"string\" }\r",
+							"    }\r",
+							"};\r",
+							"\r",
+							"pm.test('Validate schema', function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Success\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql(\"success\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data).to.eql(\"\"+pm.variables.get(\"id\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate Message\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Successfully! Record has been deleted\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/{{version}}/delete/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"{{version}}",
+						"delete",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
