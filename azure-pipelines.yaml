@@ -2,74 +2,74 @@ name: Azure Pipelines
 variables:
   - group: ssh-config
 stages:
-  # - stage: Infrastructure
-  #   displayName: Azure Resources Create with terraform
-  #   jobs:
-  #   - job: TerraformTasks
-  #     displayName: Terraform
-  #     pool:
-  #       vmImage: 'ubuntu-18.04'
-  #     steps:
-  #     - task: DownloadSecureFile@1
-  #       name: terraform
-  #       displayName: Download terraform.tfvars
-  #       inputs:
-  #         secureFile: 'terraform.tfvars'
+  - stage: Infrastructure
+    displayName: Azure Resources Create with terraform
+    jobs:
+    - job: TerraformTasks
+      displayName: Terraform
+      pool:
+        vmImage: 'ubuntu-18.04'
+      steps:
+      - task: DownloadSecureFile@1
+        name: terraform
+        displayName: Download terraform.tfvars
+        inputs:
+          secureFile: 'terraform.tfvars'
 
-  #     - task: TerraformInstaller@0
-  #       displayName: Install Terraform
-  #       inputs:
-  #         terraformVersion: 'latest'
+      - task: TerraformInstaller@0
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 'latest'
 
-  #     - task: Bash@3
-  #       displayName: Copy terraform.tfvars
-  #       inputs:
-  #         targetType: 'inline'
-  #         script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform
+      - task: Bash@3
+        displayName: Copy terraform.tfvars
+        inputs:
+          targetType: 'inline'
+          script: cp $(Agent.TempDirectory)/terraform.tfvars $(System.DefaultWorkingDirectory)/terraform
 
-  #     # Needed for Terraform VM deployment
-  #     - task: InstallSSHKey@0
-  #       displayName: Key for SSH to VM
-  #       inputs:
-  #         knownHostsEntry: '$(knownHostsEntry)'
-  #         sshPublicKey: '$(sshPublicKey)'
-  #         sshKeySecureFile: 'id_rsa'
+      # Needed for Terraform VM deployment
+      - task: InstallSSHKey@0
+        displayName: Key for SSH to VM
+        inputs:
+          knownHostsEntry: '$(knownHostsEntry)'
+          sshPublicKey: '$(sshPublicKey)'
+          sshKeySecureFile: 'id_rsa'
 
-  #     - task: TerraformTaskV2@2
-  #       displayName: Terraform Init
-  #       inputs:
-  #         provider: 'azurerm'
-  #         command: 'init'
-  #         backendServiceArm: 'azure-service-cn'
-  #         backendAzureRmResourceGroupName: 'project3'
-  #         backendAzureRmStorageAccountName: '$(StorageAccountName)'
-  #         backendAzureRmContainerName: 'project3'
-  #         backendAzureRmKey: 'terraform.tfstate'
-  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+      - task: TerraformTaskV2@2
+        displayName: Terraform Init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'azure-service-cn'
+          backendAzureRmResourceGroupName: 'project3'
+          backendAzureRmStorageAccountName: '$(StorageAccountName)'
+          backendAzureRmContainerName: 'project3'
+          backendAzureRmKey: 'terraform.tfstate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
 
-  #     - task: TerraformTaskV2@2
-  #       displayName: Terraform Validate
-  #       inputs:
-  #         provider: 'azurerm'
-  #         command: 'validate'
-  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-  #         backendServiceArm: 'azure-service-cn'
-  #     - task: TerraformTaskV2@2
-  #       displayName: Terraform Plan
-  #       inputs:
-  #         provider: 'azurerm'
-  #         command: 'plan'
-  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-  #         environmentServiceNameAzureRM: 'azure-service-cn'
-  #     - task: TerraformTaskV2@2
-  #       displayName: Terraform Apply
-  #       inputs:
-  #         provider: 'azurerm'
-  #         command: 'apply'
-  #         commandOptions: |
-  #           -auto-approve
-  #         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-  #         environmentServiceNameAzureRM: 'azure-service-cn'
+      - task: TerraformTaskV2@2
+        displayName: Terraform Validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+          backendServiceArm: 'azure-service-cn'
+      - task: TerraformTaskV2@2
+        displayName: Terraform Plan
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+          environmentServiceNameAzureRM: 'azure-service-cn'
+      - task: TerraformTaskV2@2
+        displayName: Terraform Apply
+        inputs:
+          provider: 'azurerm'
+          command: 'apply'
+          commandOptions: |
+            -auto-approve
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
+          environmentServiceNameAzureRM: 'azure-service-cn'
 
 
   - stage: Build
@@ -191,79 +191,79 @@ stages:
                     targetPath: '$(System.DefaultWorkingDirectory)/log/selenium/ui-logs.log'
                     artifactName: 'drop-selenium-logs'
                     
-      # - job: Test_Jmeter
-      #   displayName: Performance testing
-      #   pool:
-      #     vmImage: 'ubuntu-18.04'
-      #   steps:
-      #     - bash: |
-      #         # sudo apt-get install openjdk-11-jre-headless -y
-      #         java -version
-      #         wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.4.3.zip
-      #         unzip apache-jmeter-5.4.3.zip              
-      #         echo "####################"
-      #         echo "jmeter version : " 
-      #         apache-jmeter-5.4.3/bin/jmeter -v
-      #         echo "####################"
-      #         mkdir -p log/jmeter
-      #       displayName: Install JMeter
-      #     - bash: |
-      #         apache-jmeter-5.4.3/bin/jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
-      #       displayName: Stress test
-      #     - bash: |
-      #         apache-jmeter-5.4.3/bin/jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
-      #       displayName: EnduranceTest
-      #     - task: ArchiveFiles@2
-      #       displayName: Archive HTML report
-      #       inputs:
-      #         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
-      #         includeRootFolder: false
-      #         archiveType: zip
-      #         archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report.zip'
-      #         verbose: true
-      #     - task: ArchiveFiles@2
-      #       displayName: Archive HTML report
-      #       inputs:
-      #         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
-      #         includeRootFolder: false
-      #         archiveType: zip
-      #         archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report.zip'
-      #         verbose: true
-      #     - task: PublishPipelineArtifact@1
-      #       displayName: Publish JMeter logs
-      #       inputs:
-      #         targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
-      #         artifact: drop-jmeter   
+      - job: Test_Jmeter
+        displayName: Performance testing
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - bash: |
+              # sudo apt-get install openjdk-11-jre-headless -y
+              java -version
+              wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.4.3.zip
+              unzip apache-jmeter-5.4.3.zip              
+              echo "####################"
+              echo "jmeter version : " 
+              apache-jmeter-5.4.3/bin/jmeter -v
+              echo "####################"
+              mkdir -p log/jmeter
+            displayName: Install JMeter
+          - bash: |
+              apache-jmeter-5.4.3/bin/jmeter -n -t automatedtesting/jmeter/StressTest.jmx -l log/jmeter/stress-test-result.csv -e -o log/jmeter/stress-test-html-report -j log/jmeter/jmeter-stress-test.log
+            displayName: Stress test
+          - bash: |
+              apache-jmeter-5.4.3/bin/jmeter -n -t automatedtesting/jmeter/EnduranceTest.jmx -l log/jmeter/endurance-test-result.csv -e -o log/jmeter/endurance-test-html-report -j log/jmeter/jmeter-endurance-test.log
+            displayName: EnduranceTest
+          - task: ArchiveFiles@2
+            displayName: Archive HTML report
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/stress-test-html-report.zip'
+              verbose: true
+          - task: ArchiveFiles@2
+            displayName: Archive HTML report
+            inputs:
+              rootFolderOrFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: '$(System.DefaultWorkingDirectory)/log/jmeter/endurance-test-html-report.zip'
+              verbose: true
+          - task: PublishPipelineArtifact@1
+            displayName: Publish JMeter logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/jmeter'
+              artifact: drop-jmeter   
 
-      # - job: Test_Post_man
-      #   displayName: Postman Test
-      #   pool:
-      #       vmImage: 'ubuntu-18.04'
-      #   steps: 
-      #     - task: NodeTool@0
-      #       displayName: Install Node v14.X
-      #       inputs:
-      #         versionSpec: '14.x'
-      #     - bash: |
-      #         node -v
-      #         sudo npm install -g newman
-      #         mkdir -p log/newman
-      #         newman -v
-      #       displayName: Install Newman CLI
-      #     - bash: |
-      #           newman run automatedtesting/postman/project3-aruze-ReTest.postman_collection.json -e automatedtesting/postman/Env.RegressionTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/RegressionTest.xml --suppress-exit-code
-      #       displayName: Run Regression Test
-      #     - bash: |
-      #           newman run automatedtesting/postman/project3-aruze-ValTest.postman_collection.json -e automatedtesting/postman/Env.ValidationTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/ValidationTest.xml --suppress-exit-code
-      #       displayName: Run Validation Test
-      #     - task: PublishPipelineArtifact@1
-      #       displayName: Publish Newman logs
-      #       inputs:
-      #         targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
-      #         artifactName: 'drop-newman-logs'
-      #     - task: PublishTestResults@2
-      #       displayName: Publish report postman
-      #       condition: always()
-      #       inputs:
-      #        testResultsFormat: JUnit
-      #        testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'
+      - job: Test_Post_man
+        displayName: Postman Test
+        pool:
+            vmImage: 'ubuntu-18.04'
+        steps: 
+          - task: NodeTool@0
+            displayName: Install Node v14.X
+            inputs:
+              versionSpec: '14.x'
+          - bash: |
+              node -v
+              sudo npm install -g newman
+              mkdir -p log/newman
+              newman -v
+            displayName: Install Newman CLI
+          - bash: |
+                newman run automatedtesting/postman/project3-aruze-ReTest.postman_collection.json -e automatedtesting/postman/Env.RegressionTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/RegressionTest.xml --suppress-exit-code
+            displayName: Run Regression Test
+          - bash: |
+                newman run automatedtesting/postman/project3-aruze-ValTest.postman_collection.json -e automatedtesting/postman/Env.ValidationTest.postman_environment.json --reporters cli,junit --reporter-junit-export log/newman/ValidationTest.xml --suppress-exit-code
+            displayName: Run Validation Test
+          - task: PublishPipelineArtifact@1
+            displayName: Publish Newman logs
+            inputs:
+              targetPath: '$(System.DefaultWorkingDirectory)/log/newman'
+              artifactName: 'drop-newman-logs'
+          - task: PublishTestResults@2
+            displayName: Publish report postman
+            condition: always()
+            inputs:
+             testResultsFormat: JUnit
+             testResultsFiles: '$(System.DefaultWorkingDirectory)/log/newman/*.xml'
