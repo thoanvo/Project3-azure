@@ -90,6 +90,7 @@ Tips: if you use SSH on Azure devops, remove comment "public key on pipeline" in
 ![screen shot](guideImg/p18.png) <br/>
 
 > 9.3. Choose tab "Secure files" ->  "+Secure files" -> upload two file : **terraform.tfvars** and key file **id_rsa** created on step 6 <br/>
+> Since these files store sensitive key values, we will not store it on Git, so we will use the azure Library <br/>
 ![screen shot](guideImg/p19.png) <br/>
 ![screen shot](guideImg/p20.png) <br/>
 
