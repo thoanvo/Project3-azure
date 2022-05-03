@@ -1,7 +1,6 @@
 name: Azure Pipelines
 variables:
   - group: ssh-config
-    
 stages:
   - stage: Infrastructure
     displayName: Azure Resources Create with terraform
@@ -41,7 +40,7 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          backendServiceArm: 'azure-sevice-cn'
+          backendServiceArm: 'azure-service-cn'
           backendAzureRmResourceGroupName: 'project3'
           backendAzureRmStorageAccountName: '$(StorageAccountName)'
           backendAzureRmContainerName: 'project3'
@@ -54,7 +53,7 @@ stages:
           provider: 'azurerm'
           command: 'validate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'azure-sevice-cn'
+          backendServiceArm: 'azure-service-cn'
 
       - task: TerraformTaskV2@2
         displayName: Terraform Plan
@@ -62,7 +61,7 @@ stages:
           provider: 'azurerm'
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'azure-sevice-cn'
+          backendServiceArm: 'azure-service-cn'
 
       - task: TerraformTaskV2@2
         displayName: Terraform Apply
@@ -72,7 +71,7 @@ stages:
           commandOptions: |
             -auto-approve
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          environmentServiceNameAzureRM: 'azure-sevice-cn'
+          backendServiceArm: 'azure-service-cn'
 
 
   - stage: Build
