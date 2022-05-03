@@ -178,6 +178,7 @@ stages:
                     sudo mkdir -p /var/log/selenium
                     sudo chmod 664 /var/log/selenium
                     sudo python3 login.py > ui-logs.log
+                    sudo python3 login.py
                     sudo mv ui-logs.log /var/log/selenium
                     cd $(System.DefaultWorkingDirectory)
                     mkdir -p log/selenium
