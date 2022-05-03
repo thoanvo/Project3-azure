@@ -107,7 +107,6 @@ stages:
         inputs:
          targetPath: $(Build.BuildId)-selenium.zip
          artifact: drop-selenium
-
   - stage: DeployApp
     displayName: Deploy App
     jobs:
@@ -122,7 +121,7 @@ stages:
             - task: AzureWebApp@1
               displayName: 'Deploy Azure Web App'
               inputs:
-                azureSubscription: 'azure-sevice-cn'
+                azureSubscription: 'azure-service-cn'
                 appName: 'App-project3'
                 appType: webApp
                 package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
