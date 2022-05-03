@@ -54,15 +54,13 @@ stages:
           command: 'validate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
           backendServiceArm: 'azure-service-cn'
-
       - task: TerraformTaskV2@2
         displayName: Terraform Plan
         inputs:
           provider: 'azurerm'
           command: 'plan'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          backendServiceArm: 'azure-service-cn'
-
+          environmentServiceNameAzureRM: 'azure-service-cn'
       - task: TerraformTaskV2@2
         displayName: Terraform Apply
         inputs:
@@ -71,7 +69,7 @@ stages:
           commandOptions: |
             -auto-approve
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
-          backendServiceArm: 'azure-service-cn'
+          environmentServiceNameAzureRM: 'azure-service-cn'
 
 
   - stage: Build
