@@ -1,6 +1,4 @@
 
-
-
 name: Azure Pipelines
 variables:
   - group: ssh-config
